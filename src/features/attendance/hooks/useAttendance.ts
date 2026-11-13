@@ -12,7 +12,7 @@ const attendanceSyncService = new AttendanceSyncService(attendanceRepository);
 export function useAttendance(online: boolean, enabled: boolean) {
   const [today, setToday] = useState<AttendanceRecord | null>(null);
   const [recent, setRecent] = useState<AttendanceRecord[]>([]);
-  const [syncCounts, setSyncCounts] = useState({ pending: 0, synced: 0, rejected: 0 });
+  const [events, setEvents] = useState<Awaited<ReturnType<AttendanceRepository['getRecentEvents']>>>([]);
   const [loading, setLoading] = useState(false);
   const [working, setWorking] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -28,14 +28,14 @@ export function useAttendance(online: boolean, enabled: boolean) {
           // Keep showing the local cache when the API cannot be reached.
         }
       }
-      const [todayRecord, recentRecords, nextSyncCounts] = await Promise.all([
+      const [todayRecord, recentRecords, recentEvents] = await Promise.all([
         attendanceService.getToday(),
         attendanceService.getRecent(),
-        attendanceRepository.getSyncCounts(),
+        attendanceRepository.getRecentEvents(),
       ]);
       setToday(todayRecord);
       setRecent(recentRecords);
-      setSyncCounts(nextSyncCounts);
+      setEvents(recentEvents);
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to load attendance.');
@@ -79,5 +79,5 @@ export function useAttendance(online: boolean, enabled: boolean) {
     }
   }, [refresh]);
 
-  return { today, recent, pendingCount: syncCounts.pending, syncCounts, loading, working, syncing, error, refresh, recordAction, syncNow };
+  return { today, recent, events, loading, working, syncing, error, refresh, recordAction, syncNow };
 }
