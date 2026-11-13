@@ -60,12 +60,12 @@ export function validateLeaveDraft(
   }
 
   if (!draft.reason.trim()) {
-    return { valid: false, message: 'Please enter a reason for your leave.' };
+    return { valid: false, message: 'Please tell us why you need leave.' };
   }
 
   const days = calendarDaysInclusive(start, end);
   if (days > balance[draft.type]) {
-    return { valid: false, message: `You have ${balance[draft.type]} ${draft.type} leave days available, but selected ${days} days. Please adjust your dates or choose the other leave type.` };
+    return { valid: false, message: `You have ${balance[draft.type]} ${draft.type} leave days available, but selected ${days}. Please choose fewer days or switch leave type.` };
   }
 
   const overlaps = existingRequests.some(request => {
