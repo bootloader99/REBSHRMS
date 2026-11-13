@@ -22,7 +22,7 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size, focused }) => {
-          const iconNames: Record<string, string> = {
+          const iconNames: Record<string, React.ComponentProps<typeof Icon>['name']> = {
             Home: focused ? 'home' : 'home-outline',
             Attendance: focused ? 'calendar-check' : 'calendar-check-outline',
             Leave: focused ? 'calendar-edit' : 'calendar-edit-outline',
