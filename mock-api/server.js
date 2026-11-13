@@ -123,7 +123,7 @@ async function handle(req, res) {
   }
 
   if (req.method === 'GET' && url.pathname === '/attendance') {
-    if (scenario === 'slow') await new Promise(resolve => setTimeout(resolve, 12000));
+    await applyScenarioDelay(scenario);
     const month = url.searchParams.get('month');
     const days = new Map();
     for (const event of store.attendanceEvents) {
@@ -192,12 +192,12 @@ async function handle(req, res) {
   }
 
   if (req.method === 'GET' && url.pathname === '/leave/balance') {
-    if (scenario === 'slow') await new Promise(resolve => setTimeout(resolve, 12000));
+    await applyScenarioDelay(scenario);
     return send(res, 200, store.leaveBalance);
   }
 
   if (req.method === 'GET' && url.pathname === '/leave/requests') {
-    if (scenario === 'slow') await new Promise(resolve => setTimeout(resolve, 12000));
+    await applyScenarioDelay(scenario);
     return send(res, 200, store.leaveRequests);
   }
 
