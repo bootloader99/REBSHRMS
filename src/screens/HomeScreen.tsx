@@ -48,11 +48,6 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
         </View>
       )}
       <View style={styles.employeeCard}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {employee.name.split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase()}
-          </Text>
-        </View>
         <View style={styles.employeeInfo}>
           <Text style={styles.employeeName}>{employee.name}</Text>
           <Text style={styles.muted}>{employee.id} · {employee.department}</Text>
@@ -129,8 +124,6 @@ const styles = StyleSheet.create({
   offlineNotice: { backgroundColor: '#F1EEE4', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
   offlineNoticeText: { color: '#75633A', fontSize: 12, lineHeight: 17 },
   employeeCard: { backgroundColor: '#E8F0EA', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
-  avatar: { width: 46, height: 46, borderRadius: 23, backgroundColor: '#D2E2D7', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  avatarText: { color: '#245C4A', fontWeight: '700', fontSize: 15 },
   employeeInfo: { flex: 1 },
   employeeName: { color: '#253A30', fontSize: 15, fontWeight: '700' },
   muted: { color: '#7C8B83', fontSize: 12, marginTop: 4 },
