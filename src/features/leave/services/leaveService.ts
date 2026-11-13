@@ -5,6 +5,11 @@ import type { LeaveBalance, LeaveRequest } from '../../../types/domain';
 import { LeaveRepository } from '../../../database/repositories/leaveRepository';
 import { validateLeaveDraft, type LeaveDraft } from '../domain/leaveRules';
 
+function toApiDate(value: string): string {
+  const match = /^(\\d{2})-(\\d{2})-(\\d{4})$/.exec(value);
+  return match ? `${match[3]}-${match[2]}-${match[1]}` : value;
+}
+
 function createLeaveId(): string {
   return `leave-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -28,7 +33,7 @@ export class LeaveService {
 
   async submit(draft: LeaveDraft, online: boolean): Promise<LeaveRequest> {
     if (!online) throw new Error('Connect to the internet to submit a leave request.');
-    const [balance, requests] = await this.getCachedState();
+    const [balance, requests] = await this.refreshFromServer();
     const validation = validateLeaveDraft(
       draft, getCompanyDate(appConfig.companyTimeZone), balance, requests,
     );
@@ -36,7 +41,7 @@ export class LeaveService {
 
     const request = await apiRequest<LeaveRequest>('/leave/requests', {
       method: 'POST',
-      body: JSON.stringify({ ...draft, id: createLeaveId() }),
+      body: JSON.stringify({ ...draft, startDate: toApiDate(draft.startDate), endDate: toApiDate(draft.endDate), id: createLeaveId() }),
     });
     await this.repository.saveRequest(request);
     return request;
