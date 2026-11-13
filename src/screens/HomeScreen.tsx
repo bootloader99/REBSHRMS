@@ -103,7 +103,7 @@ export function HomeScreen({ employee, attendance, leave }: Props) {
         ? <ActivityIndicator color="#245C4A" />
         : attendance.recent.length === 0
           ? <View style={styles.empty}><Text style={styles.muted}>No attendance records yet.</Text></View>
-          : attendance.recent.slice(0, 3).map(record => (
+          : attendance.recent.slice(0, 5).map(record => (
             <View key={record.id} style={styles.listRow}>
               <View>
                 <Text style={styles.rowTitle}>{record.workDate}</Text>
