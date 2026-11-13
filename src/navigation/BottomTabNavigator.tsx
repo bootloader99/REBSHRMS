@@ -31,7 +31,7 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
         },
         tabBarActiveTintColor: '#245C4A',
         tabBarInactiveTintColor: '#87958D',
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600', marginBottom: 3 },
+        tabBarLabelStyle: { fontSize: 11, fontFamily: 'Inter-Medium', marginBottom: 3 },
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           borderTopColor: '#E7ECE7',
