@@ -94,6 +94,26 @@ The employee record in `src/hooks/useAppController.ts` is sample data. Replace i
 
 The Android emulator can access a mock API running on the development machine through `10.0.2.2`. For a physical device, use the USB port-forwarding or LAN-address setup described in the project setup instructions.
 
+
+## Mock API contract
+
+The app uses the local Node.js HTTP API through the shared `apiRequest()` HTTP client. The mock server is for assignment/demo use only; it does not connect to REBS production services or require production credentials.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/employee/me` | Load the preconfigured demo employee |
+| GET | `/attendance?month=YYYY-MM` | Load attendance history; the `month` query is optional |
+| POST | `/attendance/events` | Submit a check-in or check-out event |
+| GET | `/leave/balance` | Load casual and sick leave balances |
+| GET | `/leave/requests` | Load existing leave requests |
+| POST | `/leave/requests` | Submit a leave application |
+
+The current app requests `/attendance` without a month filter so the mock API returns the available attendance history; the server also accepts the optional `month=YYYY-MM` filter. This keeps the dashboard/history request simple for the assignment.
+
+The demo employee profile is supplied by the mock API. Office coordinates and the 200 m geofence radius are kept in `src/config/appConfig.ts` because they are app-level attendance configuration in this prototype, rather than employee profile fields returned by `/employee/me`. Replace the temporary coordinates with the actual office coordinates supplied for a real deployment.
+
+Mock behavior is selected with `mockScenario` in `src/config/appConfig.ts` and sent in the `X-Mock-Scenario` request header. The supported scenarios are listed in the Setup section above.
+
 ## Architecture
 
 The implementation follows a small feature-based structure and keeps the responsibilities separate:
