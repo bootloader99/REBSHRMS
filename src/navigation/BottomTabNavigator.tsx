@@ -41,6 +41,7 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
               employee={controller.employee}
               attendance={controller.attendance}
               leave={controller.leave}
+              online={controller.online}
             />
           </ScrollView>
         )}
