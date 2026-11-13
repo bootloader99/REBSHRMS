@@ -50,8 +50,6 @@ npm run ios
 
 ## Mock API
 
-The mock API is a local server. It is not hosted online and is not included in the APK, so it must be started separately on a computer to use online features such as loading dashboard data and submitting leave requests.
-
 The phone/emulator running the app must be able to reach the computer running the mock API:
 
 - **Physical Android phone over USB:** The default API address is `http://127.0.0.1:3000`. Connect the phone with USB debugging enabled and run `adb reverse tcp:3000 tcp:3000` on the computer.
@@ -79,7 +77,6 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 - Attendance can be recorded offline and synced when the API is reachable. Background sync after closing the app is not included.
 - Previously loaded leave requests can be viewed offline, but submitting a new leave request requires a connection to the mock API.
 - The location is checked in the app. A real server should also validate attendance location and prevent duplicate events.
-- The mock API is only for this assignment; it is not connected to REBS systems.
 
 ## Tests
 
