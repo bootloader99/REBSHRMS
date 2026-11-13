@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,24 +10,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { database } from './src/database/connection';
-import { initializeDatabase } from './src/database/schema';
-import { EmployeeRepository } from './src/database/repositories/employeeRepository';
-import { useAttendance } from './src/features/attendance/hooks/useAttendance';
 import { appConfig } from './src/config/appConfig';
-import { apiRequest } from './src/core/api/apiClient';
-import type { Employee, LeaveType } from './src/types/domain';
-import { useLeave } from './src/features/leave/hooks/useLeave';
-
-type Tab = 'home' | 'attendance' | 'leave';
-
-// Replace this sample employee with the employee details supplied for the demo.
-const demoEmployee: Employee = {
-  id: 'EMP-001',
-  name: 'Alex Morgan',
-  department: 'Product & Engineering',
-};
+import { useAppController, type WorkspaceTab } from './src/hooks/useAppController';
+import type { LeaveType } from './src/types/domain';
 
 function formatTime(value: string | null): string {
   if (!value) return '--:--';
@@ -45,75 +30,17 @@ function formatDuration(start: string | null, end: string | null, now: number): 
 }
 
 function App() {
-  const [clockNow, setClockNow] = useState(Date.now());
-  const [activeTab, setActiveTab] = useState<Tab>('home');
-  const [ready, setReady] = useState(false);
-  const [startupError, setStartupError] = useState<string | null>(null);
-  const [employee, setEmployee] = useState<Employee>(demoEmployee);
-  const network = useNetInfo();
-  const online = network.isConnected === true && network.isInternetReachable !== false;
-  const attendance = useAttendance(online, ready);
-  const leave = useLeave(online, ready);
-  const [leaveType, setLeaveType] = useState<LeaveType>('casual');
-  const [leaveStart, setLeaveStart] = useState('');
-  const [leaveEnd, setLeaveEnd] = useState('');
-  const [leaveReason, setLeaveReason] = useState('');
-
-  useEffect(() => {
-    const interval = setInterval(() => setClockNow(Date.now()), 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    const setup = async () => {
-      try {
-        await initializeDatabase(database);
-        const employeeRepository = new EmployeeRepository(database);
-        const cachedEmployee = await employeeRepository.getEmployee();
-        if (!cachedEmployee) await employeeRepository.saveEmployee(demoEmployee);
-        if (mounted) {
-          setEmployee(cachedEmployee ?? demoEmployee);
-          setReady(true);
-        }
-      } catch (error) {
-        if (mounted) {
-          setStartupError(error instanceof Error ? error.message : 'Unable to prepare the local database.');
-        }
-      }
-    };
-    void setup();
-    return () => { mounted = false; };
-  }, []);
-
-  useEffect(() => {
-    if (!ready || !online) return;
-    apiRequest<Employee>('/employee/me')
-      .then(async remoteEmployee => {
-        await new EmployeeRepository(database).saveEmployee(remoteEmployee);
-        setEmployee(remoteEmployee);
-      })
-      .catch(() => undefined);
-  }, [ready, online]);
-
+  const {
+    activeTab, setActiveTab, ready, startupError, employee, online,
+    attendance, leave, clockNow, leaveType, setLeaveType,
+    leaveStart, setLeaveStart, leaveEnd, setLeaveEnd,
+    leaveReason, setLeaveReason, handleAttendance, submitLeave,
+  } = useAppController();
   const status = attendance.today?.status ?? 'not_checked_in';
   const statusLabel = status === 'checked_in'
     ? 'Checked in'
     : status === 'checked_out' ? 'Checked out' : 'Not checked in';
   const actionLabel = status === 'not_checked_in' ? 'Check in' : 'Check out';
-  const actionType = status === 'not_checked_in' ? 'check_in' : 'check_out';
-
-  const autoSyncAttempted = useRef(false);
-  useEffect(() => {
-    if (!online) {
-      autoSyncAttempted.current = false;
-      return;
-    }
-    if (ready && attendance.pendingCount > 0 && !autoSyncAttempted.current) {
-      autoSyncAttempted.current = true;
-      attendance.syncNow().catch(() => undefined);
-    }
-  }, [ready, online, attendance.pendingCount, attendance.syncNow]);
 
   if (!ready) {
     return (
@@ -125,10 +52,6 @@ function App() {
       </SafeAreaView>
     );
   }
-
-  const handleAttendance = () => {
-    attendance.recordAction(actionType).catch(() => undefined);
-  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -155,7 +78,7 @@ function App() {
       </View>
 
       <View style={styles.tabs}>
-        {(['home', 'attendance', 'leave'] as Tab[]).map(tab => (
+        {(['home', 'attendance', 'leave'] as WorkspaceTab[]).map(tab => (
           <TouchableOpacity
             key={tab}
             onPress={() => setActiveTab(tab)}
@@ -275,12 +198,7 @@ function App() {
               <TextInput value={leaveReason} onChangeText={setLeaveReason} placeholder="At least 10 characters" style={[styles.input, styles.reasonInput]} multiline />
               <TouchableOpacity
                 disabled={leave.submitting || leave.loading || !online}
-                onPress={() => {
-                  leave.submit({ type: leaveType, startDate: leaveStart, endDate: leaveEnd, reason: leaveReason })
-                    .then(success => {
-                      if (success) { setLeaveStart(''); setLeaveEnd(''); setLeaveReason(''); }
-                    });
-                }}
+                onPress={submitLeave}
                 style={[styles.actionButton, (leave.submitting || leave.loading || !online) && styles.disabledButton]}
               >
                 {leave.submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.actionText}>Submit leave request</Text>}

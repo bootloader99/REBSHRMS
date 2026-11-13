@@ -4,15 +4,17 @@ This repository contains the React Native version of the employee workspace assi
 
 ## Current implementation status
 
-The current branch contains the first working slice of the app:
+The branch contains a working employee workspace prototype:
 
 - A local OP-SQLite database and schema for employees, attendance days/events, leave balances and leave requests.
 - A dashboard that reads the employee's attendance from local storage.
 - Attendance state-transition and leave-validation rules with unit tests.
 - Location permission handling and a 200 m geofence check for attendance actions.
-- A persistent local attendance event queue. Events are stored as pending and are not yet synchronized to a server.
+- A persistent attendance event queue with manual and connectivity-triggered synchronization.
+- A small Node.js mock HTTP API for employee, attendance and leave data.
+- Leave balance, request history, local validation and online submission.
 
-The mock HTTP API, automatic/manual sync, leave request screens, and final demo packaging are still in progress. Do not treat this branch as the finished assignment yet.
+The app still needs device testing, a final UI review, an installable APK and a short demo recording.
 
 ## Setup
 
@@ -88,13 +90,13 @@ The implementation follows a small feature-based structure and keeps the respons
 - **Repository:** reads and writes structured records in SQLite.
 - **Database:** owns the schema and the single shared OP-SQLite connection.
 
-The attendance write stores the daily summary and its event in one SQLite batch transaction. A unique database index prevents a second check-in or second check-out event for the same attendance day. The event ID is created once and is intended to remain unchanged for every future server retry.
+Attendance records and events are saved in SQLite. A unique database index prevents a second check-in or second check-out event for the same attendance day. The event ID is created once and is intended to remain unchanged for every future server retry.
 
 ## Important assumptions and limitations
 
 - The configured company timezone is `Asia/Kolkata`; change it if the assignment environment specifies another timezone.
 - The office geofence radius is 200 metres. Device-side location checks improve the user experience but are not a security boundary. A production server must independently validate attendance location and event identity.
-- The current app stores attendance locally. Server idempotency and synchronization must be implemented by the mock API/client sync milestone.
+- The mock API uses the stable attendance event ID as an idempotency key so retrying after a timeout does not create a second event.
 - Background synchronization after the app is terminated is not part of the planned scope.
 - The demo employee is sample data, not a real REBS employee record.
 
