@@ -47,7 +47,7 @@ describe('validateLeaveDraft', () => {
 
   it('rejects a reason with fewer than ten non-space characters', () => {
     expect(validateLeaveDraft(
-      { ...validDraft, reason: '  short  ' },
+      { ...validDraft, reason: '  abcdefgh  ' },
       '2026-11-13',
       balance,
       [],
