@@ -64,7 +64,7 @@ npm test -- --runInBand
 
 ## Demo configuration
 
-Before trying check-in or check-out, set the office coordinates in `src/config/appConfig.ts`:
+The office coordinates and radius are configured in `src/config/appConfig.ts`:
 
 ```ts
 office: {
@@ -74,11 +74,25 @@ office: {
 },
 ```
 
-The coordinates are intentionally left unset because the assignment material does not provide an office address or GPS coordinates. Attendance actions show a configuration message until real demo coordinates are supplied.
+The coordinates currently in the config are temporary demo coordinates, not verified REBS office coordinates. Before a real deployment, replace them with the actual office coordinates. Keep the radius at 200 metres unless the company specifies otherwise.
 
-The employee record in `App.tsx` is clearly marked sample data. Replace it with the preconfigured employee details supplied for the demonstration.
+### Simulating attendance locations on the Android emulator
 
-The Android emulator can access a mock API running on the development machine through `10.0.2.2`. For a physical device, change the API base URL to the development machine's LAN address.
+Reviewers can test the geofence without physically travelling to the configured location:
+
+1. Start the Android emulator and open REBS HRMS.
+2. In Android Studio's emulator toolbar, open **Extended Controls** (the three-dot button).
+3. Select **Location**.
+4. Enter the configured office latitude and longitude, then select **Set Location**. Check-in/check-out should pass the location check.
+5. Change the simulated location to a point more than 200 metres away and try again. The app should show the distance and explain that attendance is only allowed within 200 metres.
+
+Use the coordinates in `src/config/appConfig.ts` as the centre point for both tests. The emulator's Location panel changes the GPS position reported to the app; no application code changes are needed between the two tests.
+
+On a physical Android device, use its actual GPS location or an Android mock-location app configured through Developer options. Do not use mock locations for a production attendance system.
+
+The employee record in `src/hooks/useAppController.ts` is sample data. Replace it with the preconfigured employee details supplied for the demonstration.
+
+The Android emulator can access a mock API running on the development machine through `10.0.2.2`. For a physical device, use the USB port-forwarding or LAN-address setup described in the project setup instructions.
 
 ## Architecture
 
