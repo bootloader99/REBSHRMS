@@ -79,8 +79,7 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 
 ## AI Assistance
 
-AI tools were used as development support during this assignment, mainly to help investigate dependency and build issues and troubleshoot errors.
-
+AI tools were used as development support during this assignment, mainly to help investigate dependency and build issues, troubleshoot errors, and clarify implementation approaches. The implementation decisions, feature requirements, integration, and final review were handled as part of my development work.
 ## Time spent
 
 5 hours and 30 minutes.
