@@ -108,13 +108,7 @@ Run the available tests with:
 npm test -- --runInBand
 ```
 
-TypeScript check:
-
-```sh
-npx tsc --noEmit
-```
-
 ## Time spent
 
-Approximately 8 hours, within the assignment time limit.
+4 hours and 30 minutes.
 
