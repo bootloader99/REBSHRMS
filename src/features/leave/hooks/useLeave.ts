@@ -50,7 +50,10 @@ export function useLeave(online: boolean, enabled: boolean) {
       setSuccess('Your leave request has been submitted successfully.');
       return true;
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to submit leave request.');
+      const [latestBalance, latestRequests] = await leaveService.getCachedState();
+      setBalance(latestBalance);
+      setRequests(latestRequests);
+      setError(e instanceof Error ? e.message : 'We couldn’t submit your leave request. Please try again.');
       return false;
     } finally {
       setSubmitting(false);
