@@ -1,97 +1,83 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# REBS HRMS
 
-# Getting Started
+This assignment was given for Flutter. I have implemented it in React Native instead, based on my React Native experience.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- Employee dashboard with attendance, leave balance and recent records.
+- Check-in and check-out with location check (200 metre limit).
+- Attendance is saved locally when offline and can sync later.
+- Apply for casual or sick leave.
+- View leave requests and their status.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Project structure
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- `src/screens` – app screens
+- `src/features` – attendance and leave code
+- `src/database` – SQLite database and repositories
+- `src/core/api` – API client
+- `mock-api` – local mock server
+
+The app uses SQLite for local data. The screens use hooks and services to work with the database and API.
+
+## Run the project
+
+Make sure you have Node.js, the Android Studio/Android SDK setup and a connected Android device or emulator. This project uses React Native, so it needs the React Native development setup rather than Flutter.
+
+Install the packages:
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+npm install
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+Start the mock API in another terminal:
 
 ```sh
-# Using npm
+npm run mock-api
+```
+
+Run the Android app:
+
+```sh
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+For iOS, you will also need a Mac with Xcode and CocoaPods. Run `pod install` inside the `ios` folder, then run:
 
 ```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Mock API
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+The phone/emulator running the app must be able to reach the computer running the mock API:
 
-## Step 3: Modify your app
+- **Physical Android phone over USB:** The default API address is `http://127.0.0.1:3000`. Connect the phone with USB debugging enabled and run `adb reverse tcp:3000 tcp:3000` on the computer.
+- **Physical Android phone over Wi-Fi:** Connect both the phone and computer to the same Wi-Fi network. Set `api.baseUrl` in `src/config/appConfig.ts` to the computer's local IPv4 address, for example `http://192.168.1.5:3000`. Allow Node.js through the computer's firewall if needed, then rebuild the APK with this address.
+- **Android emulator:** Use `http://10.0.2.2:3000` as the API address.
 
-Now that you have successfully run the app, let's make changes!
+The APK uses the API address that was set when it was built. An APK configured with `127.0.0.1` will not connect to a computer over Wi-Fi unless USB port forwarding is set up with `adb reverse`.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+The mock server runs on port 3000. Its data is saved in `mock-api/store.json`.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+You can change `mockScenario` in `src/config/appConfig.ts` to try different responses:
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- `success`
+- `slow`
+- `timeout-after-accept`
+- `server-error`
+- `duplicate-conflict`
+- `leave-reject`
 
-## Congratulations! :tada:
+## Assumptions and limitations
 
-You've successfully run and modified your React Native App. :partying_face:
+- The app uses one demo employee. Login is not included.
+- Company timezone is set to `Asia/Kolkata`.
+- The office coordinates in the config are temporary demo coordinates and should be replaced with the actual office location.
+- Attendance can be recorded offline and synced when the API is reachable. Background sync after closing the app is not included.
+- Previously loaded leave requests can be viewed offline, but submitting a new leave request requires a connection to the mock API.
+- The location is checked in the app. A real server should also validate attendance location and prevent duplicate events.
 
-### Now what?
+## Time spent
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+4 hours and 30 minutes.
