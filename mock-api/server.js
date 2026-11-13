@@ -175,7 +175,7 @@ async function handle(req, res) {
       || !dateIsValid(body.endDate)
       || body.endDate < body.startDate
       || typeof body.reason !== 'string'
-      || body.reason.trim().length < 10) {
+      || !body.reason.trim()) {
       return send(res, 422, { code: 'INVALID_LEAVE_REQUEST', message: 'The leave request details are invalid.' });
     }
 
@@ -194,7 +194,7 @@ async function handle(req, res) {
 
     const days = daysInclusive(body.startDate, body.endDate);
     if (days > store.leaveBalance[body.type]) {
-      return send(res, 422, { code: 'INSUFFICIENT_BALANCE', message: 'Requested days exceed your available balance.' });
+      return send(res, 422, { code: 'INSUFFICIENT_BALANCE', message: `You have only ${store.leaveBalance[body.type]} days of this leave type available, but selected ${days} days.` });
     }
 
     const request = {
