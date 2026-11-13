@@ -2,8 +2,8 @@
 export const appConfig = {
   companyTimeZone: 'Asia/Kolkata',
   office: {
-    latitude: null as number | null,
-    longitude: null as number | null,
+    latitude: 10.025821,
+    longitude: 76.435891,
     allowedRadiusMeters: 200,
   },
   api: {
