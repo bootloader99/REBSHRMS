@@ -8,8 +8,6 @@ import type { Employee, LeaveType } from '../types/domain';
 import { useAttendance } from '../features/attendance/hooks/useAttendance';
 import { useLeave } from '../features/leave/hooks/useLeave';
 
-export type WorkspaceTab = 'home' | 'attendance' | 'leave';
-
 const demoEmployee: Employee = {
   id: 'EMP-001',
   name: 'Alex Morgan',
@@ -17,11 +15,9 @@ const demoEmployee: Employee = {
 };
 
 export function useAppController() {
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>('home');
   const [ready, setReady] = useState(false);
   const [startupError, setStartupError] = useState<string | null>(null);
   const [employee, setEmployee] = useState<Employee>(demoEmployee);
-  const [clockNow, setClockNow] = useState(Date.now());
   const [leaveType, setLeaveType] = useState<LeaveType>('casual');
   const [leaveStart, setLeaveStart] = useState('');
   const [leaveEnd, setLeaveEnd] = useState('');
@@ -31,11 +27,6 @@ export function useAppController() {
   const online = network.isConnected === true && network.isInternetReachable !== false;
   const attendance = useAttendance(online, ready);
   const leave = useLeave(online, ready);
-
-  useEffect(() => {
-    const interval = setInterval(() => setClockNow(Date.now()), 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -104,8 +95,8 @@ export function useAppController() {
   }, [leave.submit, leaveType, leaveStart, leaveEnd, leaveReason]);
 
   return {
-    activeTab, setActiveTab, ready, startupError, employee, online,
-    attendance, leave, clockNow, leaveType, setLeaveType,
+    ready, startupError, employee, online,
+    attendance, leave, leaveType, setLeaveType,
     leaveStart, setLeaveStart, leaveEnd, setLeaveEnd,
     leaveReason, setLeaveReason, handleAttendance, submitLeave,
   };
