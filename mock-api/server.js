@@ -27,7 +27,10 @@ function loadStore() {
     fs.writeFileSync(STORE_PATH, JSON.stringify(DEFAULT_STORE, null, 2));
   }
   const store = JSON.parse(fs.readFileSync(STORE_PATH, 'utf8'));
-  if (store.employee?.id === DEFAULT_STORE.employee.id) {
+  if (
+    store.employee?.id === DEFAULT_STORE.employee.id
+    && store.employee.department !== DEFAULT_STORE.employee.department
+  ) {
     store.employee.department = DEFAULT_STORE.employee.department;
     saveStore(store);
   }
@@ -43,17 +46,49 @@ function send(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function applyScenarioDelay(scenario) {
+  if (scenario === 'slow') {
+    await delay(12000);
+  }
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
-    let raw = '';
+    const chunks = [];
+    let size = 0;
+    let tooLarge = false;
+
     req.on('data', chunk => {
-      raw += chunk;
-      if (raw.length > 100000) reject(new Error('Request body is too large.'));
+      if (tooLarge) return;
+
+      size += chunk.length;
+      if (size > 100000) {
+        tooLarge = true;
+        chunks.length = 0;
+        return;
+      }
+
+      chunks.push(chunk);
     });
+
     req.on('end', () => {
-      try { resolve(raw ? JSON.parse(raw) : {}); }
-      catch { reject(new Error('Request body must be valid JSON.')); }
+      if (tooLarge) {
+        reject(new Error('Request body is too large.'));
+        return;
+      }
+
+      const raw = Buffer.concat(chunks).toString('utf8');
+      try {
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch {
+        reject(new Error('Request body must be valid JSON.'));
+      }
     });
+
     req.on('error', reject);
   });
 }
@@ -83,7 +118,7 @@ async function handle(req, res) {
   const store = loadStore();
 
   if (req.method === 'GET' && url.pathname === '/employee/me') {
-    if (scenario === 'slow') await new Promise(resolve => setTimeout(resolve, 12000));
+    await applyScenarioDelay(scenario);
     return send(res, 200, store.employee);
   }
 
@@ -151,7 +186,7 @@ async function handle(req, res) {
     saveStore(store);
 
     if (scenario === 'timeout-after-accept') {
-      await new Promise(resolve => setTimeout(resolve, 12000));
+      await delay(12000);
     }
     return send(res, 200, { accepted: true, duplicate: false, event: accepted });
   }
@@ -181,7 +216,10 @@ async function handle(req, res) {
       || body.endDate < body.startDate
       || typeof body.reason !== 'string'
       || body.reason.replace(/\s/g, '').length < 10) {
-      return send(res, 422, { code: 'INVALID_LEAVE_REQUEST', message: 'Reason must contain at least 10 non-whitespace characters, and the leave request details must be valid.' });
+      return send(res, 422, {
+        code: 'INVALID_LEAVE_REQUEST',
+        message: 'Reason must contain at least 10 non-whitespace characters, and the leave request details must be valid.',
+      });
     }
 
     const today = companyDate();
@@ -199,7 +237,10 @@ async function handle(req, res) {
 
     const days = daysInclusive(body.startDate, body.endDate);
     if (days > store.leaveBalance[body.type]) {
-      return send(res, 422, { code: 'INSUFFICIENT_BALANCE', message: `You have only ${store.leaveBalance[body.type]} ${body.type} leave days available, but selected ${days}. Please choose fewer days or switch leave type.` });
+      return send(res, 422, {
+        code: 'INSUFFICIENT_BALANCE',
+        message: `You have only ${store.leaveBalance[body.type]} ${body.type} leave days available, but selected ${days}. Please choose fewer days or switch leave type.`,
+      });
     }
 
     const request = {
