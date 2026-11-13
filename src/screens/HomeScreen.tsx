@@ -4,7 +4,7 @@ import { appConfig } from '../config/appConfig';
 import { useAppController } from '../hooks/useAppController';
 
 type Controller = ReturnType<typeof useAppController>;
-type Props = Pick<Controller, 'employee' | 'attendance' | 'leave'>;
+type Props = Pick<Controller, 'employee' | 'attendance' | 'leave' | 'online'>;
 
 function formatTime(value: string | null): string {
   if (!value) return '--:--';
@@ -24,7 +24,7 @@ function formatDuration(start: string | null, endTime: number | string): string 
   return `${hours}h ${String(minutes).padStart(2, '0')}m`;
 }
 
-export function HomeScreen({ employee, attendance, leave }: Props) {
+export function HomeScreen({ employee, attendance, leave, online }: Props) {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const status = attendance.today?.status ?? 'not_checked_in';
   const checkInAt = attendance.today?.checkInAt ?? null;
@@ -42,6 +42,11 @@ export function HomeScreen({ employee, attendance, leave }: Props) {
   return (
     <View>
       <Text style={styles.greeting}>Your day at a glance</Text>
+      {!online && (
+        <View style={styles.offlineNotice}>
+          <Text style={styles.offlineNoticeText}>You're offline. Showing saved data from this device.</Text>
+        </View>
+      )}
       <View style={styles.employeeCard}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
@@ -121,6 +126,8 @@ export function HomeScreen({ employee, attendance, leave }: Props) {
 
 const styles = StyleSheet.create({
   greeting: { color: '#253A30', fontSize: 19, fontWeight: '700', marginBottom: 14 },
+  offlineNotice: { backgroundColor: '#F1EEE4', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
+  offlineNoticeText: { color: '#75633A', fontSize: 12, lineHeight: 17 },
   employeeCard: { backgroundColor: '#E8F0EA', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
   avatar: { width: 46, height: 46, borderRadius: 23, backgroundColor: '#D2E2D7', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   avatarText: { color: '#245C4A', fontWeight: '700', fontSize: 15 },
