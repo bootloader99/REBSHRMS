@@ -23,10 +23,9 @@ jest.mock('react-native-geolocation-service', () => ({
 import App from '../App';
 
 test('renders the employee workspace', async () => {
-  let renderer: ReactTestRenderer.ReactTestRenderer | null = null;
+  let renderer!: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(async () => {
     renderer = ReactTestRenderer.create(<App />);
   });
-  if (!renderer) throw new Error('App did not render.');
   expect(renderer.root.findAllByProps({ children: 'REBS HRMS' }).length).toBeGreaterThan(0);
 });
