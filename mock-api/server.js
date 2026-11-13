@@ -194,7 +194,7 @@ async function handle(req, res) {
 
     const days = daysInclusive(body.startDate, body.endDate);
     if (days > store.leaveBalance[body.type]) {
-      return send(res, 422, { code: 'INSUFFICIENT_BALANCE', message: `You have only ${store.leaveBalance[body.type]} days of this leave type available, but selected ${days} days.` });
+      return send(res, 422, { code: 'INSUFFICIENT_BALANCE', message: `You have only ${store.leaveBalance[body.type]} ${body.type} leave days available, but selected ${days}. Please choose fewer days or switch leave type.` });
     }
 
     const request = {
