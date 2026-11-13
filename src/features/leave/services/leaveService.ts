@@ -2,7 +2,7 @@ import { appConfig } from '../../../config/appConfig';
 import { apiRequest } from '../../../core/api/apiClient';
 import { getCompanyDate } from '../../../core/date/companyDate';
 import type { LeaveBalance, LeaveRequest } from '../../../types/domain';
-import { LeaveRepository } from '../data/leaveRepository';
+import { LeaveRepository } from '../../../database/repositories/leaveRepository';
 import { validateLeaveDraft, type LeaveDraft } from '../domain/leaveRules';
 
 function createLeaveId(): string {

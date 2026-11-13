@@ -1,5 +1,5 @@
 import type { DB } from '@op-engineering/op-sqlite';
-import type { Employee } from '../../../types/domain';
+import type { Employee } from '../../types/domain';
 
 interface EmployeeRow { id: string; name: string; department: string; }
 

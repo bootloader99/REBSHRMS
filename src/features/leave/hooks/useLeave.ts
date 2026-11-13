@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { database } from '../../../core/database/connection';
+import { database } from '../../../database/connection';
 import type { LeaveBalance, LeaveRequest } from '../../../types/domain';
-import { LeaveRepository } from '../data/leaveRepository';
+import { LeaveRepository } from '../../../database/repositories/leaveRepository';
 import { LeaveService } from '../services/leaveService';
 import type { LeaveDraft } from '../domain/leaveRules';
 

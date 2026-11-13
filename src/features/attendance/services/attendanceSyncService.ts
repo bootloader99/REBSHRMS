@@ -1,6 +1,6 @@
 import { apiRequest, ApiError } from '../../../core/api/apiClient';
 import type { PendingAttendanceEvent } from '../../../types/domain';
-import { AttendanceRepository } from '../data/attendanceRepository';
+import { AttendanceRepository } from '../../../database/repositories/attendanceRepository';
 
 interface AttendanceEventResponse { accepted: boolean; duplicate?: boolean; }
 

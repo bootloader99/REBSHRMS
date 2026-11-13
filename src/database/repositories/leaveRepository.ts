@@ -1,5 +1,5 @@
 import type { DB } from '@op-engineering/op-sqlite';
-import type { LeaveBalance, LeaveRequest, LeaveStatus, LeaveType } from '../../../types/domain';
+import type { LeaveBalance, LeaveRequest, LeaveStatus, LeaveType } from '../../types/domain';
 
 interface LeaveBalanceRow { leave_type: LeaveType; remaining_days: number; }
 interface LeaveRequestRow {

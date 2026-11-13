@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { database } from './src/core/database/connection';
-import { initializeDatabase } from './src/core/database/schema';
-import { EmployeeRepository } from './src/features/employee/data/employeeRepository';
+import { database } from './src/database/connection';
+import { initializeDatabase } from './src/database/schema';
+import { EmployeeRepository } from './src/database/repositories/employeeRepository';
 import { useAttendance } from './src/features/attendance/hooks/useAttendance';
 import { appConfig } from './src/config/appConfig';
 import { apiRequest } from './src/core/api/apiClient';

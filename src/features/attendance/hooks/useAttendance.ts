@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { database } from '../../../core/database/connection';
-import { AttendanceRepository } from '../data/attendanceRepository';
+import { database } from '../../../database/connection';
+import { AttendanceRepository } from '../../../database/repositories/attendanceRepository';
 import { AttendanceService } from '../services/attendanceService';
 import { AttendanceSyncService } from '../services/attendanceSyncService';
 import type { AttendanceEventType, AttendanceRecord } from '../../../types/domain';

@@ -5,7 +5,7 @@ import type {
   PendingAttendanceEvent,
   AttendanceStatus,
   SyncStatus,
-} from '../../../types/domain';
+} from '../../types/domain';
 
 interface AttendanceDayRow {
   id: string;

@@ -2,7 +2,7 @@ import { appConfig } from '../../../config/appConfig';
 import { apiRequest } from '../../../core/api/apiClient';
 import type { AttendanceEventType, AttendanceRecord } from '../../../types/domain';
 import { getCompanyDate } from '../../../core/date/companyDate';
-import { AttendanceRepository } from '../data/attendanceRepository';
+import { AttendanceRepository } from '../../../database/repositories/attendanceRepository';
 import { getNextAttendanceStatus, isWithinGeofence } from '../domain/attendanceRules';
 import { getDistanceInMeters } from '../domain/geofence';
 import { getCurrentCoordinates } from './locationService';
