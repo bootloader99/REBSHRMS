@@ -112,7 +112,6 @@ export class AttendanceRepository {
     ]);
   }
 
-
   async saveRemoteDays(records: AttendanceRecord[]): Promise<void> {
     if (records.length === 0) return;
     await this.db.executeBatch(records.map(record => [
@@ -121,17 +120,6 @@ export class AttendanceRepository {
         VALUES (?, ?, ?, ?, ?)`,
       [record.id, record.workDate, record.checkInAt, record.checkOutAt, record.status],
     ]));
-  }
-
-  async getSyncCounts(): Promise<Record<SyncStatus, number>> {
-    const result = await this.db.execute(
-      'SELECT sync_status, COUNT(*) AS total FROM attendance_events GROUP BY sync_status',
-    );
-    const counts: Record<SyncStatus, number> = { pending: 0, synced: 0, rejected: 0 };
-    (result.rows as Array<{ sync_status: SyncStatus; total: number }>).forEach(row => {
-      counts[row.sync_status] = row.total;
-    });
-    return counts;
   }
 
   async getRecentEvents(limit = 10): Promise<PendingAttendanceEvent[]> {
