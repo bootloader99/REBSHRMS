@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { appConfig } from '../config/appConfig';
-import { formatCompanyDate, formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
+import { formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
 import { useAppController } from '../hooks/useAppController';
 
 type Controller = ReturnType<typeof useAppController>;
@@ -101,7 +101,7 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
             return (
               <View key={record.id} style={styles.listRow}>
                 <View style={styles.historyHeader}>
-                  <Text style={styles.rowTitle}>{formatCompanyDate(record.workDate)}</Text>
+                  <Text style={styles.rowTitle}>{record.workDate}</Text>
                   <Text style={styles.rowStatus}>
                     {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
                   </Text>
