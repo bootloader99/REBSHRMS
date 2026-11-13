@@ -1,13 +1,14 @@
 # Source layout
 
-The application is organized by responsibility and feature.
+The project keeps database access in one place and groups business logic by feature.
 
-- `config/`: environment-specific demo settings such as office geofence and API URL.
-- `types/`: shared domain types used by screens, services and persistence.
-- `app/`: application entry, providers and navigation.
-- `core/`: shared database, API, connectivity and reusable UI infrastructure.
-- `features/`: dashboard, attendance and leave feature code.
+- `database/`: SQLite connection, schema and repositories.
+- `features/attendance/`: attendance rules, location, recording and synchronization.
+- `features/leave/`: leave rules, request submission and screen state.
+- `core/api/`: the HTTP client used by the app.
+- `core/date/`: company-timezone date helpers.
+- `hooks/useAppController.ts`: coordinates startup, connectivity and feature hooks.
+- `config/` and `types/`: app settings and shared data types.
+- `App.tsx`: renders the three workspace tabs.
 
-Intended data flow: Screen → feature hook/use case → service → repository → SQLite or HTTP API.
-
-Business rules should live outside screen components. The SQLite layer is the source of truth for cached data and pending attendance events; the API is authoritative for server-accepted results.
+Data flow: App → app controller → feature hook/service → database repository or HTTP API.
