@@ -59,8 +59,8 @@ export function validateLeaveDraft(
     return { valid: false, message: 'End date must be on or after the start date.' };
   }
 
-  if (!draft.reason.trim()) {
-    return { valid: false, message: 'Please tell us why you need leave.' };
+  if (draft.reason.replace(/\\s/g, '').length < 10) {
+    return { valid: false, message: 'Reason must contain at least 10 non-whitespace characters.' };
   }
 
   const days = calendarDaysInclusive(start, end);
