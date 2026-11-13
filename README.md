@@ -76,7 +76,6 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 - The office coordinates in the config are temporary demo coordinates and should be replaced with the actual office location.
 - Attendance can be recorded offline and synced when the API is reachable. Background sync after closing the app is not included.
 - Previously loaded leave requests can be viewed offline, but submitting a new leave request requires a connection to the mock API.
-- The location is checked in the app. A real server should also validate attendance location and prevent duplicate events.
 
 ## Time spent
 
