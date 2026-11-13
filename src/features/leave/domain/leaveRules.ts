@@ -59,13 +59,13 @@ export function validateLeaveDraft(
     return { valid: false, message: 'End date must be on or after the start date.' };
   }
 
-  if (draft.reason.trim().length < 10) {
-    return { valid: false, message: 'Reason must contain at least 10 non-space characters.' };
+  if (!draft.reason.trim()) {
+    return { valid: false, message: 'Please enter a reason for your leave.' };
   }
 
   const days = calendarDaysInclusive(start, end);
   if (days > balance[draft.type]) {
-    return { valid: false, message: 'Requested days exceed your available leave balance.' };
+    return { valid: false, message: `You have ${balance[draft.type]} ${draft.type} leave days available, but selected ${days} days. Please adjust your dates or choose the other leave type.` };
   }
 
   const overlaps = existingRequests.some(request => {
