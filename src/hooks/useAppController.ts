@@ -59,8 +59,11 @@ export function useAppController() {
     if (!ready || !online) return;
     apiRequest<Employee>('/employee/me')
       .then(async remoteEmployee => {
-        await new EmployeeRepository(database).saveEmployee(remoteEmployee);
-        setEmployee(remoteEmployee);
+        const employeeToUse = remoteEmployee.id === demoEmployee.id
+          ? { ...remoteEmployee, department: demoEmployee.department }
+          : remoteEmployee;
+        await new EmployeeRepository(database).saveEmployee(employeeToUse);
+        setEmployee(employeeToUse);
       })
       .catch(() => undefined);
   }, [ready, online]);
