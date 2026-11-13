@@ -21,7 +21,7 @@ export function AppNavigator() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F7F4" />
+      <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <View>
           <Text style={styles.eyebrow}>REBS HRMS</Text>
