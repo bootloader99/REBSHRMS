@@ -25,7 +25,9 @@ export async function getCurrentCoordinates(): Promise<Coordinates> {
     Geolocation.getCurrentPosition(
       position => resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude }),
       error => {
-        if (error.code === 1) reject(new Error('Location permission was denied.'));
+        if (error.code === 1) reject(new Error(Platform.OS === 'ios'
+          ? 'Location access is disabled for REBS HRMS. Enable it in iPhone Settings > Privacy & Security > Location Services, then try again.'
+          : 'Location permission was denied. Allow location access in app settings to record attendance.'));
         else if (error.code === 2) reject(new Error('Your current location is unavailable. Check location services.'));
         else if (error.code === 3) reject(new Error('Location request timed out. Please try again.'));
         else reject(new Error(error.message || 'Unable to get your location.'));
