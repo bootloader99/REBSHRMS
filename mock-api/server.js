@@ -175,8 +175,8 @@ async function handle(req, res) {
       || !dateIsValid(body.endDate)
       || body.endDate < body.startDate
       || typeof body.reason !== 'string'
-      || !body.reason.trim()) {
-      return send(res, 422, { code: 'INVALID_LEAVE_REQUEST', message: 'The leave request details are invalid.' });
+      || body.reason.replace(/\\s/g, '').length < 10) {
+      return send(res, 422, { code: 'INVALID_LEAVE_REQUEST', message: 'Reason must contain at least 10 non-whitespace characters, and the leave request details must be valid.' });
     }
 
     const today = companyDate();
