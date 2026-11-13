@@ -1,97 +1,103 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# REBS HRMS – React Native implementation
 
-# Getting Started
+This repository contains the React Native version of the employee workspace assignment. The assignment permits React Native as an alternative to Flutter for a candidate with React Native experience.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Current implementation status
 
-## Step 1: Start Metro
+The current branch contains the first working slice of the app:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- A local OP-SQLite database and schema for employees, attendance days/events, leave balances and leave requests.
+- A dashboard that reads the employee's attendance from local storage.
+- Attendance state-transition and leave-validation rules with unit tests.
+- Location permission handling and a 200 m geofence check for attendance actions.
+- A persistent local attendance event queue. Events are stored as pending and are not yet synchronized to a server.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+The mock HTTP API, automatic/manual sync, leave request screens, and final demo packaging are still in progress. Do not treat this branch as the finished assignment yet.
+
+## Setup
+
+Use Node.js 22.13 or later and the Android/iOS toolchain required by React Native 0.88.
+
+After pulling the branch, install the newly added native dependencies and update the lockfile:
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+npm install
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+Start the mock HTTP API in a separate terminal:
 
 ```sh
-# Using npm
+npm run mock-api
+```
+
+The server listens on port 3000 and stores accepted demo data in `mock-api/store.json` (ignored by Git). Delete that file to reset the mock data.
+
+To exercise failure paths, change `mockScenario` in `src/config/appConfig.ts` to one of:
+
+- `success` – normal API responses.
+- `slow` – delayed GET responses, exceeding the client timeout.
+- `timeout-after-accept` – stores an attendance event, then delays its response. Retrying the same event ID should return the original accepted result instead of creating a duplicate.
+- `server-error` – returns HTTP 500.
+- `duplicate-conflict` – rejects attendance with HTTP 409.
+- `leave-reject` – rejects leave submission with HTTP 422.
+
+For Android:
+
+```sh
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+For iOS, install CocoaPods after npm install:
 
 ```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+cd ios && pod install && cd ..
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Run the current tests with:
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```sh
+npm test -- --runInBand
+```
 
-## Step 3: Modify your app
+## Demo configuration
 
-Now that you have successfully run the app, let's make changes!
+Before trying check-in or check-out, set the office coordinates in `src/config/appConfig.ts`:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+```ts
+office: {
+  latitude: YOUR_OFFICE_LATITUDE,
+  longitude: YOUR_OFFICE_LONGITUDE,
+  allowedRadiusMeters: 200,
+},
+```
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+The coordinates are intentionally left unset because the assignment material does not provide an office address or GPS coordinates. Attendance actions show a configuration message until real demo coordinates are supplied.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+The employee record in `App.tsx` is clearly marked sample data. Replace it with the preconfigured employee details supplied for the demonstration.
 
-## Congratulations! :tada:
+The Android emulator can access a mock API running on the development machine through `10.0.2.2`. For a physical device, change the API base URL to the development machine's LAN address.
 
-You've successfully run and modified your React Native App. :partying_face:
+## Architecture
 
-### Now what?
+The implementation follows a small feature-based structure and keeps the responsibilities separate:
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+- **Screen:** renders the employee workspace.
+- **Hook:** loads attendance state and exposes screen actions.
+- **Service/domain:** applies attendance rules, gets the device location and checks the geofence.
+- **Repository:** reads and writes structured records in SQLite.
+- **Database:** owns the schema and the single shared OP-SQLite connection.
 
-# Troubleshooting
+The attendance write stores the daily summary and its event in one SQLite batch transaction. A unique database index prevents a second check-in or second check-out event for the same attendance day. The event ID is created once and is intended to remain unchanged for every future server retry.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Important assumptions and limitations
 
-# Learn More
+- The configured company timezone is `Asia/Kolkata`; change it if the assignment environment specifies another timezone.
+- The office geofence radius is 200 metres. Device-side location checks improve the user experience but are not a security boundary. A production server must independently validate attendance location and event identity.
+- The current app stores attendance locally. Server idempotency and synchronization must be implemented by the mock API/client sync milestone.
+- Background synchronization after the app is terminated is not part of the planned scope.
+- The demo employee is sample data, not a real REBS employee record.
 
-To learn more about React Native, take a look at the following resources:
+## AI-use disclosure
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+AI assistance was used to help draft and review parts of the implementation, tests, and documentation. The candidate is reviewing the code, integrating it into the project, and is responsible for understanding, validating, and modifying the submitted work.
