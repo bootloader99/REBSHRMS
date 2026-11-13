@@ -4,6 +4,3 @@ export function getCompanyDate(timeZone: string, date = new Date()): string {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
-export function getCompanyTime(timeZone: string, date = new Date()): string {
-  return new Intl.DateTimeFormat('en-IN', { timeZone, hour: '2-digit', minute: '2-digit', hour12: true }).format(date);
-}
