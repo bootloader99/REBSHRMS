@@ -15,7 +15,7 @@ function companyDate() {
 }
 const STORE_PATH = path.join(__dirname, 'store.json');
 const DEFAULT_STORE = {
-  employee: { id: 'EMP-001', name: 'Alex Morgan', department: 'Product & Engineering' },
+  employee: { id: 'EMP-001', name: 'Alex Morgan', department: 'Software Developer' },
   leaveBalance: { casual: 8, sick: 6 },
   attendanceEvents: [],
   leaveRequests: [],
@@ -26,7 +26,12 @@ function loadStore() {
   if (!fs.existsSync(STORE_PATH)) {
     fs.writeFileSync(STORE_PATH, JSON.stringify(DEFAULT_STORE, null, 2));
   }
-  return JSON.parse(fs.readFileSync(STORE_PATH, 'utf8'));
+  const store = JSON.parse(fs.readFileSync(STORE_PATH, 'utf8'));
+  if (store.employee?.id === DEFAULT_STORE.employee.id) {
+    store.employee.department = DEFAULT_STORE.employee.department;
+    saveStore(store);
+  }
+  return store;
 }
 
 function saveStore(store) {
