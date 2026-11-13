@@ -34,22 +34,6 @@ export function AppNavigator() {
         </View>
       </View>
 
-      <View style={styles.connectionRow}>
-        <View style={[styles.connectionDot, { backgroundColor: controller.online ? '#2F8A60' : '#D18A32' }]} />
-        <Text style={styles.connectionText}>
-          {controller.online ? 'Internet connected' : 'Offline'} · {controller.attendance.syncCounts.pending} pending · {controller.attendance.syncCounts.synced} synced · {controller.attendance.syncCounts.rejected} rejected
-        </Text>
-        {controller.online && (
-          <Text
-            accessibilityRole="button"
-            onPress={() => controller.attendance.syncNow().catch(() => undefined)}
-            style={styles.syncText}
-          >
-            {controller.attendance.syncing ? 'Syncing…' : 'Sync now'}
-          </Text>
-        )}
-      </View>
-
       <View style={styles.navigator}>
         <NavigationContainer>
           <BottomTabNavigator controller={controller} />
@@ -68,10 +52,6 @@ const styles = StyleSheet.create({
   heading: { color: '#1C3028', fontSize: 25, fontWeight: '700', marginTop: 4 },
   avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#DCE9E1', alignItems: 'center', justifyContent: 'center' },
   avatarText: { color: '#245C4A', fontWeight: '700' },
-  connectionRow: { marginHorizontal: 22, marginBottom: 10, flexDirection: 'row', alignItems: 'center' },
-  connectionDot: { width: 7, height: 7, borderRadius: 4, marginRight: 7 },
-  connectionText: { color: '#77857D', fontSize: 10, flex: 1 },
-  syncText: { color: '#245C4A', fontSize: 11, fontWeight: '700', marginLeft: 8 },
   navigator: { flex: 1 },
   error: { color: '#B42318', fontSize: 12, textAlign: 'center' },
 });
