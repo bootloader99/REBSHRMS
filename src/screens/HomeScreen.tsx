@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { appConfig } from '../config/appConfig';
-import { formatCompanyDate, formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
+import { formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
 import { useAppController } from '../hooks/useAppController';
 
 type Controller = ReturnType<typeof useAppController>;
@@ -88,7 +88,7 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
           : attendance.recent.slice(0, 5).map(record => (
             <View key={record.id} style={styles.listRow}>
               <View>
-                <Text style={styles.rowTitle}>{formatCompanyDate(record.workDate)}</Text>
+                <Text style={styles.rowTitle}>{record.workDate}</Text>
                 <Text style={styles.muted}>{formatCompanyTime(record.checkInAt, appConfig.companyTimeZone)} – {formatCompanyTime(record.checkOutAt, appConfig.companyTimeZone)}</Text>
               </View>
               <Text style={styles.rowStatus}>
