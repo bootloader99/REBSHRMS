@@ -8,7 +8,7 @@ export class EmployeeRepository {
 
   async getEmployee(): Promise<Employee | null> {
     const result = await this.db.execute('SELECT id, name, department FROM employees LIMIT 1');
-    const row = result.rows[0] as EmployeeRow | undefined;
+    const row = result.rows[0] as unknown as EmployeeRow | undefined;
     return row ?? null;
   }
 
