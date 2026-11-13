@@ -80,4 +80,4 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 
 ## Time spent
 
-4 hours and 30 minutes.
+5 hours and 30 minutes.
