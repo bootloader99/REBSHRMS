@@ -13,6 +13,7 @@ export function useLeave(online: boolean, enabled: boolean) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -40,11 +41,13 @@ export function useLeave(online: boolean, enabled: boolean) {
   const submit = useCallback(async (draft: LeaveDraft) => {
     setSubmitting(true);
     setError(null);
+    setSuccess(null);
     try {
       await leaveService.submit(draft, online);
       const [nextBalance, nextRequests] = await leaveService.getCachedState();
       setBalance(nextBalance);
       setRequests(nextRequests);
+      setSuccess('Your leave request has been submitted successfully.');
       return true;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to submit leave request.');
@@ -54,5 +57,5 @@ export function useLeave(online: boolean, enabled: boolean) {
     }
   }, [online]);
 
-  return { balance, requests, loading, submitting, error, refresh, submit };
+  return { balance, requests, loading, submitting, error, success, refresh, submit };
 }
