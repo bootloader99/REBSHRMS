@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '@react-native-vector-icons/material-design-icons';
 import { ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAppController } from '../hooks/useAppController';
@@ -18,8 +19,16 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarIcon: ({ color, size, focused }) => {
+          const iconNames: Record<string, string> = {
+            Home: focused ? 'home' : 'home-outline',
+            Attendance: focused ? 'calendar-check' : 'calendar-check-outline',
+            Leave: focused ? 'calendar-edit' : 'calendar-edit-outline',
+          };
+          return <Icon name={iconNames[route.name] ?? 'circle-outline'} size={size} color={color} />;
+        },
         tabBarActiveTintColor: '#245C4A',
         tabBarInactiveTintColor: '#87958D',
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600', marginBottom: 3 },
@@ -32,7 +41,7 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
           elevation: 0,
         },
         tabBarHideOnKeyboard: true,
-      }}
+      })}
     >
       <Tab.Screen name="Home">
         {() => (
