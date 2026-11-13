@@ -57,6 +57,7 @@ export function LeaveScreen({
         </TouchableOpacity>
         {!online && <Text style={styles.note}>You can view cached requests offline. Connect to submit a new request.</Text>}
         {leave.error && <Text style={styles.error}>{leave.error}</Text>}
+        {leave.success && <Text style={styles.success}>{leave.success}</Text>}
       </View>
 
       <View style={styles.sectionHeader}>
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
   actionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
   note: { color: '#718078', fontSize: 12, lineHeight: 18, marginTop: 14 },
   error: { color: '#B42318', fontSize: 12, lineHeight: 18, marginTop: 10 },
+  success: { color: '#28734F', fontSize: 12, lineHeight: 18, marginTop: 10 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   link: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginBottom: 12 },
