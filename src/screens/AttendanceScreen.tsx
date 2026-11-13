@@ -70,21 +70,13 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
       </View>
 
       <View style={styles.syncCard}>
-        <View style={styles.syncHeader}>
-          <Text style={styles.sectionTitle}>Sync status</Text>
-          <Text style={[styles.connection, { color: online ? '#28734F' : '#B7791F' }]}>{online ? 'Online' : 'Offline'}</Text>
-        </View>
-        <View style={styles.syncCounts}>
-          <View style={styles.syncItem}><Text style={styles.syncValue}>{attendance.syncCounts.pending}</Text><Text style={styles.muted}>Pending</Text></View>
-          <View style={styles.syncItem}><Text style={styles.syncValue}>{attendance.syncCounts.synced}</Text><Text style={styles.muted}>Synced</Text></View>
-          <View style={styles.syncItem}><Text style={styles.syncValue}>{attendance.syncCounts.rejected}</Text><Text style={styles.muted}>Rejected</Text></View>
-        </View>
-        {online && (
+        {online ? (
           <TouchableOpacity onPress={() => attendance.syncNow().catch(() => undefined)} disabled={attendance.syncing} style={styles.syncButton}>
-            <Text style={styles.syncButtonText}>{attendance.syncing ? 'Syncing…' : 'Sync pending records'}</Text>
+            <Text style={styles.syncButtonText}>{attendance.syncing ? 'Syncing…' : 'Sync Now'}</Text>
           </TouchableOpacity>
+        ) : (
+          <Text style={styles.note}>You're offline. Attendance changes will sync when you're connected again.</Text>
         )}
-        {!online && <Text style={styles.note}>Attendance events will remain on this device until you're back online.</Text>}
       </View>
 
       <View style={styles.sectionHeader}>
@@ -108,6 +100,29 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
               </Text>
             </View>
           ))}
+      {attendance.events.length > 0 && (
+        <View style={styles.eventList}>
+          <Text style={styles.sectionTitle}>Recent activity</Text>
+          {attendance.events.map(event => (
+            <View key={event.id} style={styles.eventRow}>
+              <View style={styles.eventInfo}>
+                <Text style={styles.rowTitle}>{event.type === 'check_in' ? 'Check in' : 'Check out'} · {event.workDate}</Text>
+                <Text style={styles.muted}>{formatTime(event.occurredAt)}</Text>
+                {event.syncStatus === 'rejected' && event.rejectionReason ? (
+                  <Text style={styles.rejection}>{event.rejectionReason}</Text>
+                ) : null}
+              </View>
+              <Text style={[
+                styles.eventStatus,
+                event.syncStatus === 'synced' ? styles.eventSynced :
+                  event.syncStatus === 'rejected' ? styles.eventRejected : styles.eventPending,
+              ]}>
+                {event.syncStatus === 'synced' ? 'Synced' : event.syncStatus === 'rejected' ? 'Rejected' : 'Pending sync'}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
       {attendance.error && <Text style={styles.error}>{attendance.error}</Text>}
     </View>
   );
@@ -134,14 +149,17 @@ const styles = StyleSheet.create({
   actionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
   note: { color: '#718078', fontSize: 12, lineHeight: 18, marginTop: 13 },
   syncCard: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 17, marginBottom: 22, borderWidth: 1, borderColor: '#E8EDE8' },
-  syncHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionTitle: { color: '#253A30', fontSize: 16, fontWeight: '700' },
-  connection: { fontSize: 12, fontWeight: '700' },
-  syncCounts: { flexDirection: 'row', marginTop: 14, marginBottom: 3 },
-  syncItem: { flex: 1 },
-  syncValue: { color: '#263A30', fontSize: 20, fontWeight: '700' },
-  syncButton: { backgroundColor: '#E7F0E9', borderRadius: 9, paddingVertical: 11, alignItems: 'center', marginTop: 13 },
-  syncButtonText: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
+  syncButton: { backgroundColor: '#E7F0E9', borderRadius: 9, paddingVertical: 11, alignItems: 'center' },
+  syncButtonText: { color: '#245C4A', fontSize: 13, fontWeight: '700' },
+  eventList: { marginBottom: 16 },
+  eventRow: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 14, marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  eventInfo: { flex: 1, paddingRight: 10 },
+  eventStatus: { fontSize: 11, fontWeight: '700' },
+  eventPending: { color: '#A66A16' },
+  eventSynced: { color: '#28734F' },
+  eventRejected: { color: '#B42318' },
+  rejection: { color: '#B42318', fontSize: 11, marginTop: 4 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   link: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginBottom: 12 },
