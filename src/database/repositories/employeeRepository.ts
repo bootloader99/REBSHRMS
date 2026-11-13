@@ -1,7 +1,11 @@
 import type { DB } from '@op-engineering/op-sqlite';
 import type { Employee } from '../../types/domain';
 
-interface EmployeeRow { id: string; name: string; department: string; }
+interface EmployeeRow {
+  id: string;
+  name: string;
+  department: string;
+}
 
 export class EmployeeRepository {
   constructor(private readonly db: DB) {}
