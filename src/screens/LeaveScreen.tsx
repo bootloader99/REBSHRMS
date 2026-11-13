@@ -1,17 +1,11 @@
 import React from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { useAppController } from '../hooks/useAppController';
+import { formatDateInput } from '../core/date/dateFormatters';
 import type { LeaveType } from '../types/domain';
 
 type Controller = ReturnType<typeof useAppController>;
 type Props = Pick<Controller, 'leave' | 'online' | 'leaveType' | 'setLeaveType' | 'leaveStart' | 'setLeaveStart' | 'leaveEnd' | 'setLeaveEnd' | 'leaveReason' | 'setLeaveReason' | 'submitLeave'>;
-
-function formatDateInput(value: string): string {
-  const digits = value.replace(/\D/g, '').slice(0, 8);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
-}
 
 export function LeaveScreen({
   leave, online, leaveType, setLeaveType, leaveStart, setLeaveStart,
