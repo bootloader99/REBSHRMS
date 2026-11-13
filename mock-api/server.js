@@ -175,7 +175,7 @@ async function handle(req, res) {
       || !dateIsValid(body.endDate)
       || body.endDate < body.startDate
       || typeof body.reason !== 'string'
-      || body.reason.replace(/\\s/g, '').length < 10) {
+      || body.reason.replace(/\s/g, '').length < 10) {
       return send(res, 422, { code: 'INVALID_LEAVE_REQUEST', message: 'Reason must contain at least 10 non-whitespace characters, and the leave request details must be valid.' });
     }
 
