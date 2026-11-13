@@ -48,19 +48,19 @@ For iOS, you will also need a Mac with Xcode and CocoaPods. Run `pod install` in
 npm run ios
 ```
 
-The mock API runs on port 3000. The API address can be changed in `src/config/appConfig.ts`.
-
-For a physical Android phone connected over USB, use:
-
-```sh
-adb reverse tcp:3000 tcp:3000
-```
-
-For the Android emulator, the API address should be `http://10.0.2.2:3000`.
-
 ## Mock API
 
-The mock server is included in this repository and runs separately from the app. It provides employee, attendance and leave data. Its data is saved in `mock-api/store.json`.
+The mock API is a local server. It is not hosted online and is not included in the APK, so it must be started separately on a computer to use online features such as loading dashboard data and submitting leave requests.
+
+The phone/emulator running the app must be able to reach the computer running the mock API:
+
+- **Physical Android phone over USB:** The default API address is `http://127.0.0.1:3000`. Connect the phone with USB debugging enabled and run `adb reverse tcp:3000 tcp:3000` on the computer.
+- **Physical Android phone over Wi-Fi:** Connect both the phone and computer to the same Wi-Fi network. Set `api.baseUrl` in `src/config/appConfig.ts` to the computer's local IPv4 address, for example `http://192.168.1.5:3000`. Allow Node.js through the computer's firewall if needed, then rebuild the APK with this address.
+- **Android emulator:** Use `http://10.0.2.2:3000` as the API address.
+
+The APK uses the API address that was set when it was built. An APK configured with `127.0.0.1` will not connect to a computer over Wi-Fi unless USB port forwarding is set up with `adb reverse`.
+
+The mock server runs on port 3000. Its data is saved in `mock-api/store.json`.
 
 You can change `mockScenario` in `src/config/appConfig.ts` to try different responses:
 
@@ -76,7 +76,8 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 - The app uses one demo employee. Login is not included.
 - Company timezone is set to `Asia/Kolkata`.
 - The office coordinates in the config are temporary demo coordinates and should be replaced with the actual office location.
-- Attendance sync happens when the app is open and connected. Background sync after closing the app is not included.
+- Attendance can be recorded offline and synced when the API is reachable. Background sync after closing the app is not included.
+- Previously loaded leave requests can be viewed offline, but submitting a new leave request requires a connection to the mock API.
 - The location is checked in the app. A real server should also validate attendance location and prevent duplicate events.
 - The mock API is only for this assignment; it is not connected to REBS systems.
 
