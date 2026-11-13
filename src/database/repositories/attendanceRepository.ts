@@ -134,6 +134,19 @@ export class AttendanceRepository {
     return counts;
   }
 
+  async getRecentEvents(limit = 10): Promise<PendingAttendanceEvent[]> {
+    const result = await this.db.execute(
+      `SELECT attendance_events.*, employees.id AS employee_id, attendance_days.work_date
+       FROM attendance_events
+       INNER JOIN attendance_days ON attendance_days.id = attendance_events.attendance_id
+       CROSS JOIN employees
+       ORDER BY attendance_events.occurred_at DESC
+       LIMIT ?`,
+      [limit],
+    );
+    return (result.rows as AttendanceEventRow[]).map(mapEvent);
+  }
+
   async getPendingEvents(): Promise<PendingAttendanceEvent[]> {
     const result = await this.db.execute(
       `SELECT attendance_events.*, employees.id AS employee_id, attendance_days.work_date
