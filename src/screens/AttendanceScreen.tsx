@@ -114,28 +114,28 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
 
             return (
               <View key={record.id} style={styles.listRow}>
-                <View style={styles.historyContent}>
+                <View style={styles.historyHeader}>
                   <Text style={styles.rowTitle}>{record.workDate}</Text>
-                  <View style={styles.historyEvent}>
-                    <Text style={styles.muted}>Check in · {formatTime(record.checkInAt)}</Text>
-                    {renderEventStatus(checkInEvent)}
-                  </View>
-                  {record.checkOutAt ? (
-                    <View style={styles.historyEvent}>
-                      <Text style={styles.muted}>Check out · {formatTime(record.checkOutAt)}</Text>
-                      {renderEventStatus(checkOutEvent)}
-                    </View>
-                  ) : null}
-                  {checkInEvent?.syncStatus === 'rejected' && checkInEvent.rejectionReason ? (
-                    <Text style={styles.rejection}>{checkInEvent.rejectionReason}</Text>
-                  ) : null}
-                  {checkOutEvent?.syncStatus === 'rejected' && checkOutEvent.rejectionReason ? (
-                    <Text style={styles.rejection}>{checkOutEvent.rejectionReason}</Text>
-                  ) : null}
+                  <Text style={styles.rowStatus}>
+                    {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
+                  </Text>
                 </View>
-                <Text style={styles.rowStatus}>
-                  {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
-                </Text>
+                <View style={styles.historyEvent}>
+                  <Text style={styles.historyEventText}>Check in · {formatTime(record.checkInAt)}</Text>
+                  {renderEventStatus(checkInEvent)}
+                </View>
+                {record.checkOutAt ? (
+                  <View style={styles.historyEvent}>
+                    <Text style={styles.historyEventText}>Check out · {formatTime(record.checkOutAt)}</Text>
+                    {renderEventStatus(checkOutEvent)}
+                  </View>
+                ) : null}
+                {checkInEvent?.syncStatus === 'rejected' && checkInEvent.rejectionReason ? (
+                  <Text style={styles.rejection}>{checkInEvent.rejectionReason}</Text>
+                ) : null}
+                {checkOutEvent?.syncStatus === 'rejected' && checkOutEvent.rejectionReason ? (
+                  <Text style={styles.rejection}>{checkOutEvent.rejectionReason}</Text>
+                ) : null}
               </View>
             );
           })}
@@ -173,17 +173,18 @@ const styles = StyleSheet.create({
   syncButton: { backgroundColor: '#E7F0E9', borderRadius: 9, paddingHorizontal: 16, paddingVertical: 11, alignItems: 'center' },
   disabledSyncButton: { opacity: 0.5 },
   syncButtonText: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
-  eventStatus: { fontSize: 10, fontWeight: '700', marginLeft: 8 },
-  eventPending: { color: '#A66A16' },
-  eventSynced: { color: '#28734F' },
-  eventRejected: { color: '#B42318' },
+  eventStatus: { fontSize: 10, fontWeight: '700', marginLeft: 10, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 12, overflow: 'hidden', flexShrink: 0 },
+  eventPending: { color: '#94600F', backgroundColor: '#FBF1DD' },
+  eventSynced: { color: '#28734F', backgroundColor: '#E5F2E9' },
+  eventRejected: { color: '#B42318', backgroundColor: '#FCE9E7' },
   rejection: { color: '#B42318', fontSize: 11, marginTop: 4 },
-  historyContent: { flex: 1, paddingRight: 8 },
-  historyEvent: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 3 },
+  historyHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  historyEvent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 },
+  historyEventText: { color: '#7C8B83', fontSize: 12, marginTop: 4, flex: 1, flexShrink: 1 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   link: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginBottom: 12 },
-  listRow: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 15, marginBottom: 9, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  listRow: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 15, marginBottom: 9 },
   rowTitle: { color: '#304238', fontSize: 13, fontWeight: '600' },
   rowStatus: { color: '#688174', fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
   error: { color: '#B42318', fontSize: 12, lineHeight: 18, marginTop: 10 },
