@@ -70,13 +70,23 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
       </View>
 
       <View style={styles.syncCard}>
-        {online ? (
-          <TouchableOpacity onPress={() => attendance.syncNow().catch(() => undefined)} disabled={attendance.syncing} style={styles.syncButton}>
-            <Text style={styles.syncButtonText}>{attendance.syncing ? 'Syncing…' : 'Sync Now'}</Text>
-          </TouchableOpacity>
-        ) : (
-          <Text style={styles.note}>You're offline. Attendance changes will sync when you're connected again.</Text>
-        )}
+        <View style={styles.syncInfo}>
+          <Text style={styles.syncTitle}>Sync status</Text>
+          <Text style={styles.syncDescription}>
+            {!online
+              ? 'Offline · changes are saved on this device.'
+              : attendance.events.some(event => event.syncStatus === 'pending')
+                ? `${attendance.events.filter(event => event.syncStatus === 'pending').length} attendance event(s) waiting to sync.`
+                : 'Your attendance is up to date.'}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => attendance.syncNow().catch(() => undefined)}
+          disabled={!online || attendance.syncing}
+          style={[styles.syncButton, (!online || attendance.syncing) && styles.disabledSyncButton]}
+        >
+          <Text style={styles.syncButtonText}>{attendance.syncing ? 'Syncing…' : 'Sync Now'}</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.sectionHeader}>
@@ -89,29 +99,10 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
         ? <ActivityIndicator color="#245C4A" />
         : attendance.recent.length === 0
           ? <View style={styles.empty}><Text style={styles.muted}>No attendance records yet.</Text></View>
-          : attendance.recent.map(record => (
-            <View key={record.id} style={styles.listRow}>
-              <View>
-                <Text style={styles.rowTitle}>{record.workDate}</Text>
-                <Text style={styles.muted}>{formatTime(record.checkInAt)} – {formatTime(record.checkOutAt)}</Text>
-              </View>
-              <Text style={styles.rowStatus}>
-                {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
-              </Text>
-            </View>
-          ))}
-      {attendance.events.length > 0 && (
-        <View style={styles.eventList}>
-          <Text style={styles.sectionTitle}>Recent activity</Text>
-          {attendance.events.map(event => (
-            <View key={event.id} style={styles.eventRow}>
-              <View style={styles.eventInfo}>
-                <Text style={styles.rowTitle}>{event.type === 'check_in' ? 'Check in' : 'Check out'} · {event.workDate}</Text>
-                <Text style={styles.muted}>{formatTime(event.occurredAt)}</Text>
-                {event.syncStatus === 'rejected' && event.rejectionReason ? (
-                  <Text style={styles.rejection}>{event.rejectionReason}</Text>
-                ) : null}
-              </View>
+          : attendance.recent.map(record => {
+            const checkInEvent = attendance.events.find(event => event.attendanceId === record.id && event.type === 'check_in');
+            const checkOutEvent = attendance.events.find(event => event.attendanceId === record.id && event.type === 'check_out');
+            const renderEventStatus = (event: typeof checkInEvent) => event ? (
               <Text style={[
                 styles.eventStatus,
                 event.syncStatus === 'synced' ? styles.eventSynced :
@@ -119,10 +110,36 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
               ]}>
                 {event.syncStatus === 'synced' ? 'Synced' : event.syncStatus === 'rejected' ? 'Rejected' : 'Pending sync'}
               </Text>
-            </View>
-          ))}
-        </View>
-      )}
+            ) : null;
+
+            return (
+              <View key={record.id} style={styles.listRow}>
+                <View style={styles.historyContent}>
+                  <Text style={styles.rowTitle}>{record.workDate}</Text>
+                  <View style={styles.historyEvent}>
+                    <Text style={styles.muted}>Check in · {formatTime(record.checkInAt)}</Text>
+                    {renderEventStatus(checkInEvent)}
+                  </View>
+                  {record.checkOutAt ? (
+                    <View style={styles.historyEvent}>
+                      <Text style={styles.muted}>Check out · {formatTime(record.checkOutAt)}</Text>
+                      {renderEventStatus(checkOutEvent)}
+                    </View>
+                  ) : null}
+                  {checkInEvent?.syncStatus === 'rejected' && checkInEvent.rejectionReason ? (
+                    <Text style={styles.rejection}>{checkInEvent.rejectionReason}</Text>
+                  ) : null}
+                  {checkOutEvent?.syncStatus === 'rejected' && checkOutEvent.rejectionReason ? (
+                    <Text style={styles.rejection}>{checkOutEvent.rejectionReason}</Text>
+                  ) : null}
+                </View>
+                <Text style={styles.rowStatus}>
+                  {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
+                </Text>
+              </View>
+            );
+          })}
+
       {attendance.error && <Text style={styles.error}>{attendance.error}</Text>}
     </View>
   );
@@ -148,18 +165,21 @@ const styles = StyleSheet.create({
   disabledButton: { opacity: 0.45 },
   actionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
   note: { color: '#718078', fontSize: 12, lineHeight: 18, marginTop: 13 },
-  syncCard: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 17, marginBottom: 22, borderWidth: 1, borderColor: '#E8EDE8' },
+  syncCard: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 15, marginBottom: 22, borderWidth: 1, borderColor: '#E8EDE8', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  syncInfo: { flex: 1, paddingRight: 12 },
+  syncTitle: { color: '#253A30', fontSize: 14, fontWeight: '700' },
+  syncDescription: { color: '#718078', fontSize: 11, lineHeight: 16, marginTop: 4 },
   sectionTitle: { color: '#253A30', fontSize: 16, fontWeight: '700' },
-  syncButton: { backgroundColor: '#E7F0E9', borderRadius: 9, paddingVertical: 11, alignItems: 'center' },
-  syncButtonText: { color: '#245C4A', fontSize: 13, fontWeight: '700' },
-  eventList: { marginBottom: 16 },
-  eventRow: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 14, marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  eventInfo: { flex: 1, paddingRight: 10 },
-  eventStatus: { fontSize: 11, fontWeight: '700' },
+  syncButton: { backgroundColor: '#E7F0E9', borderRadius: 9, paddingHorizontal: 16, paddingVertical: 11, alignItems: 'center' },
+  disabledSyncButton: { opacity: 0.5 },
+  syncButtonText: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
+  eventStatus: { fontSize: 10, fontWeight: '700', marginLeft: 8 },
   eventPending: { color: '#A66A16' },
   eventSynced: { color: '#28734F' },
   eventRejected: { color: '#B42318' },
   rejection: { color: '#B42318', fontSize: 11, marginTop: 4 },
+  historyContent: { flex: 1, paddingRight: 8 },
+  historyEvent: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 3 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   link: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginBottom: 12 },
