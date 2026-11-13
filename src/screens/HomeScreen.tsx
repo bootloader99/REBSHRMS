@@ -120,13 +120,13 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
 }
 
 const styles = StyleSheet.create({
-  greeting: { color: '#253A30', fontSize: 19, fontWeight: '700', marginBottom: 14 },
+  greeting: { color: '#688174', fontSize: 16, fontWeight: '600', marginBottom: 14 },
   offlineNotice: { backgroundColor: '#F1EEE4', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
   offlineNoticeText: { color: '#75633A', fontSize: 12, lineHeight: 17 },
-  employeeCard: { backgroundColor: '#E8F0EA', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
+  employeeCard: { backgroundColor: '#E8F0EA', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
   employeeInfo: { flex: 1 },
   employeeName: { color: '#253A30', fontSize: 15, fontWeight: '700' },
-  muted: { color: '#7C8B83', fontSize: 12, marginTop: 4 },
+  muted: { color: '#7C8B83', fontSize: 12, lineHeight: 17, marginTop: 4 },
   card: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 18, marginBottom: 20, borderWidth: 1, borderColor: '#E8EDE8' },
   cardHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardLabel: { color: '#8A9990', fontSize: 10, fontWeight: '700', letterSpacing: 1 },
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   link: { color: '#245C4A', fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, marginBottom: 12 },
-  listRow: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 15, marginBottom: 9, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  listRow: { backgroundColor: '#FFFFFF', borderRadius: 12, paddingHorizontal: 15, paddingVertical: 17, marginBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   rowTitle: { color: '#304238', fontSize: 13, fontWeight: '600' },
   rowStatus: { color: '#688174', fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
   error: { color: '#B42318', fontSize: 12, lineHeight: 18, marginTop: 10 },
