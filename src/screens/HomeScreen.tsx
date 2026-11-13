@@ -41,7 +41,6 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
 
   return (
     <View>
-      <Text style={styles.greeting}>Your day at a glance</Text>
       {!online && (
         <View style={styles.offlineNotice}>
           <Text style={styles.offlineNoticeText}>You're offline. Showing saved data from this device.</Text>
@@ -120,7 +119,6 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
 }
 
 const styles = StyleSheet.create({
-  greeting: { color: '#688174', fontSize: 16, fontFamily: 'Poppins-Medium', marginBottom: 14 },
   offlineNotice: { backgroundColor: '#F1EEE4', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 14 },
   offlineNoticeText: { color: '#75633A', fontSize: 12, lineHeight: 17, fontFamily: 'Inter-Regular' },
   employeeCard: { backgroundColor: '#E8F0EA', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
