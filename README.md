@@ -1,6 +1,6 @@
 # REBS HRMS
 
-This is my React Native implementation of the REBS HRMS assignment.
+This assignment was given for Flutter. I have implemented it in React Native instead, based on my React Native experience.
 
 ## Features
 
@@ -22,6 +22,8 @@ The app uses SQLite for local data. The screens use hooks and services to work w
 
 ## Run the project
 
+Make sure you have Node.js, the Android Studio/Android SDK setup and a connected Android device or emulator. This project uses React Native, so it needs the React Native development setup rather than Flutter.
+
 Install the packages:
 
 ```sh
@@ -40,7 +42,7 @@ Run the Android app:
 npm run android
 ```
 
-For iOS, run `pod install` inside the `ios` folder, then run:
+For iOS, you will also need a Mac with Xcode and CocoaPods. Run `pod install` inside the `ios` folder, then run:
 
 ```sh
 npm run ios
