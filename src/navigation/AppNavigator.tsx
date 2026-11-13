@@ -27,11 +27,6 @@ export function AppNavigator() {
           <Text style={styles.eyebrow}>REBS HRMS</Text>
           <Text style={styles.heading}>Hello, {controller.employee.name.split(' ')[0]}</Text>
         </View>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {controller.employee.name.split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase()}
-          </Text>
-        </View>
       </View>
 
       <View style={styles.navigator}>
@@ -50,8 +45,6 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 22, paddingTop: 14, paddingBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   eyebrow: { color: '#688174', fontSize: 10, fontWeight: '700', letterSpacing: 1.5 },
   heading: { color: '#1C3028', fontSize: 25, fontWeight: '700', marginTop: 4 },
-  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#DCE9E1', alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: '#245C4A', fontWeight: '700' },
   navigator: { flex: 1 },
   error: { color: '#B42318', fontSize: 12, textAlign: 'center' },
 });
