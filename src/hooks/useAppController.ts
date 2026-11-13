@@ -66,11 +66,11 @@ export function useAppController() {
       autoSyncAttempted.current = false;
       return;
     }
-    if (ready && attendance.pendingCount > 0 && !autoSyncAttempted.current) {
+    if (ready && attendance.events.some(event => event.syncStatus === 'pending') && !autoSyncAttempted.current) {
       autoSyncAttempted.current = true;
       attendance.syncNow().catch(() => undefined);
     }
-  }, [ready, online, attendance.pendingCount, attendance.syncNow]);
+  }, [ready, online, attendance.events, attendance.syncNow]);
 
   const status = attendance.today?.status ?? 'not_checked_in';
   const actionType = status === 'not_checked_in' ? 'check_in' : 'check_out';
