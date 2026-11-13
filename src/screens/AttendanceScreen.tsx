@@ -1,25 +1,11 @@
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { appConfig } from '../config/appConfig';
+import { formatCompanyDate, formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
 import { useAppController } from '../hooks/useAppController';
 
 type Controller = ReturnType<typeof useAppController>;
 type Props = Pick<Controller, 'attendance' | 'handleAttendance' | 'online'>;
-
-function formatTime(value: string | null): string {
-  if (!value) return '--:--';
-  return new Date(value).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: appConfig.companyTimeZone,
-  });
-}
-
-function formatDuration(start: string | null, end: string | null): string {
-  if (!start) return '--';
-  const minutes = Math.max(0, Math.floor((new Date(end ?? Date.now()).getTime() - new Date(start).getTime()) / 60000));
-  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
-}
 
 export function AttendanceScreen({ attendance, handleAttendance, online }: Props) {
   const status = attendance.today?.status ?? 'not_checked_in';
@@ -45,11 +31,11 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
         <View style={styles.metrics}>
           <View style={styles.metric}>
             <Text style={styles.muted}>Check in</Text>
-            <Text style={styles.metricValue}>{formatTime(attendance.today?.checkInAt ?? null)}</Text>
+            <Text style={styles.metricValue}>{formatCompanyTime(attendance.today?.checkInAt ?? null, appConfig.companyTimeZone)}</Text>
           </View>
           <View style={styles.metric}>
             <Text style={styles.muted}>Check out</Text>
-            <Text style={styles.metricValue}>{formatTime(attendance.today?.checkOutAt ?? null)}</Text>
+            <Text style={styles.metricValue}>{formatCompanyTime(attendance.today?.checkOutAt ?? null, appConfig.companyTimeZone)}</Text>
           </View>
           <View style={styles.metric}>
             <Text style={styles.muted}>Duration</Text>
@@ -115,18 +101,18 @@ export function AttendanceScreen({ attendance, handleAttendance, online }: Props
             return (
               <View key={record.id} style={styles.listRow}>
                 <View style={styles.historyHeader}>
-                  <Text style={styles.rowTitle}>{record.workDate}</Text>
+                  <Text style={styles.rowTitle}>{formatCompanyDate(record.workDate)}</Text>
                   <Text style={styles.rowStatus}>
                     {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
                   </Text>
                 </View>
                 <View style={styles.historyEvent}>
-                  <Text style={styles.historyEventText}>Check in · {formatTime(record.checkInAt)}</Text>
+                  <Text style={styles.historyEventText}>Check in · {formatCompanyTime(record.checkInAt, appConfig.companyTimeZone)}</Text>
                   {renderEventStatus(checkInEvent)}
                 </View>
                 {record.checkOutAt ? (
                   <View style={styles.historyEvent}>
-                    <Text style={styles.historyEventText}>Check out · {formatTime(record.checkOutAt)}</Text>
+                    <Text style={styles.historyEventText}>Check out · {formatCompanyTime(record.checkOutAt, appConfig.companyTimeZone)}</Text>
                     {renderEventStatus(checkOutEvent)}
                   </View>
                 ) : null}
