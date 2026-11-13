@@ -59,7 +59,7 @@ export class AttendanceRepository {
       'SELECT * FROM attendance_days WHERE work_date = ? LIMIT 1',
       [workDate],
     );
-    const row = result.rows[0] as AttendanceDayRow | undefined;
+    const row = result.rows[0] as unknown as AttendanceDayRow | undefined;
     return row ? mapDay(row) : null;
   }
 
@@ -68,7 +68,7 @@ export class AttendanceRepository {
       'SELECT * FROM attendance_days ORDER BY work_date DESC LIMIT ?',
       [limit],
     );
-    return (result.rows as AttendanceDayRow[]).map(mapDay);
+    return (result.rows as unknown as AttendanceDayRow[]).map(mapDay);
   }
 
   async saveDayAndEvent(
@@ -144,7 +144,7 @@ export class AttendanceRepository {
        LIMIT ?`,
       [limit],
     );
-    return (result.rows as AttendanceEventRow[]).map(mapEvent);
+    return (result.rows as unknown as AttendanceEventRow[]).map(mapEvent);
   }
 
   async getPendingEvents(): Promise<PendingAttendanceEvent[]> {
