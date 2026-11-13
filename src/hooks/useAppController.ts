@@ -11,7 +11,7 @@ import { useLeave } from '../features/leave/hooks/useLeave';
 const demoEmployee: Employee = {
   id: 'EMP-001',
   name: 'Alex Morgan',
-  department: 'Product & Engineering',
+  department: 'Software Developer',
 };
 
 export function useAppController() {
@@ -35,9 +35,14 @@ export function useAppController() {
         await initializeDatabase(database);
         const employeeRepository = new EmployeeRepository(database);
         const cachedEmployee = await employeeRepository.getEmployee();
-        if (!cachedEmployee) await employeeRepository.saveEmployee(demoEmployee);
+        const employeeToUse = cachedEmployee?.id === demoEmployee.id
+          ? { ...cachedEmployee, department: demoEmployee.department }
+          : cachedEmployee ?? demoEmployee;
+        if (!cachedEmployee || employeeToUse.department !== cachedEmployee.department) {
+          await employeeRepository.saveEmployee(employeeToUse);
+        }
         if (mounted) {
-          setEmployee(cachedEmployee ?? demoEmployee);
+          setEmployee(employeeToUse);
           setReady(true);
         }
       } catch (error) {
