@@ -12,11 +12,18 @@ export type LeaveValidationResult =
   | { valid: false; message: string };
 
 function parseDate(value: string): Date | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+  let year: number;
+  let month: number;
+  let day: number;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    [year, month, day] = value.split('-').map(Number);
+  } else if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+    [day, month, year] = value.split('-').map(Number);
+  } else {
     return null;
   }
 
-  const [year, month, day] = value.split('-').map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
 
   return date.getUTCFullYear() === year
