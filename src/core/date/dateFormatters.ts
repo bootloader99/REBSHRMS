@@ -17,17 +17,6 @@ export function formatDuration(start: string | null, end: number | string | null
   return `${hours}h ${String(minutes).padStart(2, '0')}m`;
 }
 
-export function formatCompanyDate(value: string): string {
-  const [year, month, day] = value.split('-').map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
-  return new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(date);
-}
-
 export function formatDateInput(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 8);
   if (digits.length <= 2) return digits;
