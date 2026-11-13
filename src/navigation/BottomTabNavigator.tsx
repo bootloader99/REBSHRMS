@@ -1,4 +1,5 @@
 import React from 'react';
+import { ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAppController } from '../hooks/useAppController';
 import { HomeScreen } from '../screens/HomeScreen';
@@ -30,43 +31,58 @@ export function BottomTabNavigator({ controller }: BottomTabNavigatorProps) {
           height: 58,
           elevation: 0,
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen name="Home">
         {() => (
-          <HomeScreen
-            employee={controller.employee}
-            attendance={controller.attendance}
-            leave={controller.leave}
-          />
+          <ScrollView contentContainerStyle={styles.screenContent} showsVerticalScrollIndicator={false}>
+            <HomeScreen
+              employee={controller.employee}
+              attendance={controller.attendance}
+              leave={controller.leave}
+            />
+          </ScrollView>
         )}
       </Tab.Screen>
       <Tab.Screen name="Attendance">
         {() => (
-          <AttendanceScreen
-            attendance={controller.attendance}
-            handleAttendance={controller.handleAttendance}
-            online={controller.online}
-          />
+          <ScrollView contentContainerStyle={styles.screenContent} showsVerticalScrollIndicator={false}>
+            <AttendanceScreen
+              attendance={controller.attendance}
+              handleAttendance={controller.handleAttendance}
+              online={controller.online}
+            />
+          </ScrollView>
         )}
       </Tab.Screen>
       <Tab.Screen name="Leave">
         {() => (
-          <LeaveScreen
-            leave={controller.leave}
-            online={controller.online}
-            leaveType={controller.leaveType}
-            setLeaveType={controller.setLeaveType}
-            leaveStart={controller.leaveStart}
-            setLeaveStart={controller.setLeaveStart}
-            leaveEnd={controller.leaveEnd}
-            setLeaveEnd={controller.setLeaveEnd}
-            leaveReason={controller.leaveReason}
-            setLeaveReason={controller.setLeaveReason}
-            submitLeave={controller.submitLeave}
-          />
+          <ScrollView contentContainerStyle={styles.screenContent} showsVerticalScrollIndicator={false}>
+            <LeaveScreen
+              leave={controller.leave}
+              online={controller.online}
+              leaveType={controller.leaveType}
+              setLeaveType={controller.setLeaveType}
+              leaveStart={controller.leaveStart}
+              setLeaveStart={controller.setLeaveStart}
+              leaveEnd={controller.leaveEnd}
+              setLeaveEnd={controller.setLeaveEnd}
+              leaveReason={controller.leaveReason}
+              setLeaveReason={controller.setLeaveReason}
+              submitLeave={controller.submitLeave}
+            />
+          </ScrollView>
         )}
       </Tab.Screen>
     </Tab.Navigator>
   );
 }
+
+const styles = {
+  screenContent: {
+    paddingHorizontal: 22,
+    paddingTop: 18,
+    paddingBottom: 28,
+  },
+};
