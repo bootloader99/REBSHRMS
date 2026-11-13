@@ -6,6 +6,13 @@ import type { LeaveType } from '../types/domain';
 type Controller = ReturnType<typeof useAppController>;
 type Props = Pick<Controller, 'leave' | 'online' | 'leaveType' | 'setLeaveType' | 'leaveStart' | 'setLeaveStart' | 'leaveEnd' | 'setLeaveEnd' | 'leaveReason' | 'setLeaveReason' | 'submitLeave'>;
 
+function formatDateInput(value: string): string {
+  const digits = value.replace(/\\D/g, '').slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+}
+
 export function LeaveScreen({
   leave, online, leaveType, setLeaveType, leaveStart, setLeaveStart,
   leaveEnd, setLeaveEnd, leaveReason, setLeaveReason, submitLeave,
@@ -40,9 +47,9 @@ export function LeaveScreen({
         </View>
 
         <Text style={styles.inputLabel}>Start date</Text>
-        <TextInput value={leaveStart} onChangeText={setLeaveStart} placeholder="YYYY-MM-DD" style={styles.input} autoCapitalize="none" />
+        <TextInput value={leaveStart} onChangeText={value => setLeaveStart(formatDateInput(value))} placeholder="DD-MM-YYYY" placeholderTextColor="#8A9990" keyboardType="number-pad" maxLength={10} style={styles.input} />
         <Text style={styles.inputLabel}>End date</Text>
-        <TextInput value={leaveEnd} onChangeText={setLeaveEnd} placeholder="YYYY-MM-DD" style={styles.input} autoCapitalize="none" />
+        <TextInput value={leaveEnd} onChangeText={value => setLeaveEnd(formatDateInput(value))} placeholder="DD-MM-YYYY" placeholderTextColor="#8A9990" keyboardType="number-pad" maxLength={10} style={styles.input} />
         <Text style={styles.inputLabel}>Reason</Text>
         <TextInput value={leaveReason} onChangeText={setLeaveReason} placeholder="At least 10 characters" style={[styles.input, styles.reasonInput]} multiline />
 
