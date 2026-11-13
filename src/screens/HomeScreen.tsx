@@ -1,28 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { appConfig } from '../config/appConfig';
+import { formatCompanyDate, formatCompanyTime, formatDuration } from '../core/date/dateFormatters';
 import { useAppController } from '../hooks/useAppController';
 
 type Controller = ReturnType<typeof useAppController>;
 type Props = Pick<Controller, 'employee' | 'attendance' | 'leave' | 'online'>;
-
-function formatTime(value: string | null): string {
-  if (!value) return '--:--';
-  return new Date(value).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: appConfig.companyTimeZone,
-  });
-}
-
-function formatDuration(start: string | null, endTime: number | string): string {
-  if (!start) return '--';
-  const elapsedMs = Math.max(0, new Date(endTime).getTime() - new Date(start).getTime());
-  const totalMinutes = Math.floor(elapsedMs / 60000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}h ${String(minutes).padStart(2, '0')}m`;
-}
 
 export function HomeScreen({ employee, attendance, leave, online }: Props) {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -63,11 +46,11 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
         <View style={styles.timeRow}>
           <View>
             <Text style={styles.muted}>Check in</Text>
-            <Text style={styles.time}>{formatTime(attendance.today?.checkInAt ?? null)}</Text>
+            <Text style={styles.time}>{formatCompanyTime(attendance.today?.checkInAt ?? null, appConfig.companyTimeZone)}</Text>
           </View>
           <View>
             <Text style={styles.muted}>Check out</Text>
-            <Text style={styles.time}>{formatTime(attendance.today?.checkOutAt ?? null)}</Text>
+            <Text style={styles.time}>{formatCompanyTime(attendance.today?.checkOutAt ?? null, appConfig.companyTimeZone)}</Text>
           </View>
         </View>
         <View style={styles.durationRow}>
@@ -105,8 +88,8 @@ export function HomeScreen({ employee, attendance, leave, online }: Props) {
           : attendance.recent.slice(0, 5).map(record => (
             <View key={record.id} style={styles.listRow}>
               <View>
-                <Text style={styles.rowTitle}>{record.workDate}</Text>
-                <Text style={styles.muted}>{formatTime(record.checkInAt)} – {formatTime(record.checkOutAt)}</Text>
+                <Text style={styles.rowTitle}>{formatCompanyDate(record.workDate)}</Text>
+                <Text style={styles.muted}>{formatCompanyTime(record.checkInAt, appConfig.companyTimeZone)} – {formatCompanyTime(record.checkOutAt, appConfig.companyTimeZone)}</Text>
               </View>
               <Text style={styles.rowStatus}>
                 {record.status === 'checked_out' ? 'Complete' : record.status === 'checked_in' ? 'In progress' : 'Not started'}
