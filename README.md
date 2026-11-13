@@ -78,14 +78,6 @@ You can change `mockScenario` in `src/config/appConfig.ts` to try different resp
 - Previously loaded leave requests can be viewed offline, but submitting a new leave request requires a connection to the mock API.
 - The location is checked in the app. A real server should also validate attendance location and prevent duplicate events.
 
-## Tests
-
-Run the tests with:
-
-```sh
-npm test -- --runInBand
-```
-
 ## Time spent
 
 4 hours and 30 minutes.
