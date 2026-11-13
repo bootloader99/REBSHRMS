@@ -13,7 +13,7 @@ export class LeaveRepository {
   async getBalance(): Promise<LeaveBalance> {
     const result = await this.db.execute('SELECT leave_type, remaining_days FROM leave_balances');
     const balance: LeaveBalance = { casual: 0, sick: 0 };
-    (result.rows as LeaveBalanceRow[]).forEach(row => { balance[row.leave_type] = row.remaining_days; });
+    (result.rows as unknown as LeaveBalanceRow[]).forEach(row => { balance[row.leave_type] = row.remaining_days; });
     return balance;
   }
 
@@ -26,7 +26,7 @@ export class LeaveRepository {
 
   async getRequests(): Promise<LeaveRequest[]> {
     const result = await this.db.execute('SELECT * FROM leave_requests ORDER BY submitted_at DESC');
-    return (result.rows as LeaveRequestRow[]).map(row => ({
+    return (result.rows as unknown as LeaveRequestRow[]).map(row => ({
       id: row.id, type: row.leave_type, startDate: row.start_date, endDate: row.end_date,
       reason: row.reason, status: row.status, submittedAt: row.submitted_at,
     }));
