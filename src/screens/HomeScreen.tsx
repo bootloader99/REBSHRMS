@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { appConfig } from '../config/appConfig';
 import { useAppController } from '../hooks/useAppController';
@@ -15,8 +15,26 @@ function formatTime(value: string | null): string {
   });
 }
 
+function formatDuration(start: string | null, endTime: number | string): string {
+  if (!start) return '--';
+  const elapsedMs = Math.max(0, new Date(endTime).getTime() - new Date(start).getTime());
+  const totalMinutes = Math.floor(elapsedMs / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}h ${String(minutes).padStart(2, '0')}m`;
+}
+
 export function HomeScreen({ employee, attendance, leave }: Props) {
+  const [currentTime, setCurrentTime] = useState(Date.now());
   const status = attendance.today?.status ?? 'not_checked_in';
+  const checkInAt = attendance.today?.checkInAt ?? null;
+  const checkOutAt = attendance.today?.checkOutAt ?? null;
+
+  useEffect(() => {
+    if (status !== 'checked_in' || !checkInAt) return undefined;
+    const interval = setInterval(() => setCurrentTime(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, [status, checkInAt]);
   const statusLabel = status === 'checked_in'
     ? 'Checked in'
     : status === 'checked_out' ? 'Checked out' : 'Not checked in';
@@ -52,6 +70,12 @@ export function HomeScreen({ employee, attendance, leave }: Props) {
             <Text style={styles.muted}>Check out</Text>
             <Text style={styles.time}>{formatTime(attendance.today?.checkOutAt ?? null)}</Text>
           </View>
+        </View>
+        <View style={styles.durationRow}>
+          <Text style={styles.muted}>Elapsed working duration</Text>
+          <Text style={styles.duration}>
+            {formatDuration(checkInAt, checkOutAt ?? currentTime)}
+          </Text>
         </View>
       </View>
 
@@ -113,6 +137,8 @@ const styles = StyleSheet.create({
   statusPillText: { color: '#426452', fontSize: 10, fontWeight: '700' },
   timeRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#EEF1EE', marginTop: 18, paddingTop: 15, paddingRight: 28 },
   time: { color: '#263A30', fontSize: 20, fontWeight: '700', marginTop: 5 },
+  durationRow: { borderTopWidth: 1, borderTopColor: '#EEF1EE', marginTop: 15, paddingTop: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  duration: { color: '#245C4A', fontSize: 15, fontWeight: '700' },
   sectionTitle: { color: '#253A30', fontSize: 16, fontWeight: '700', marginBottom: 12 },
   balanceRow: { flexDirection: 'row', marginBottom: 20 },
   balanceCard: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 14, padding: 16, marginRight: 8, borderWidth: 1, borderColor: '#E8EDE8' },
